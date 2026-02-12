@@ -2,6 +2,7 @@
 const express = require("express");
 const cors = require("cors");
 const issueRouter = require("./routes/issues.router");
+const totalIssueRouter = require("./routes/totalIssues.router");
 const { ratelimiterMiddlware } = require("./middleware/rateLimitMIddleware");
 // const { env } = require("./config/constants/env");
 require("dotenv").config();
@@ -26,6 +27,7 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 app.use("/issues", ratelimiterMiddlware, issueRouter);
+app.use("/totalIssues", ratelimiterMiddlware, totalIssueRouter);
 
 //start server
 app.listen(PORT, () => {
