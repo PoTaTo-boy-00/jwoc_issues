@@ -4,6 +4,7 @@ const cors = require("cors");
 const issueRouter = require("./routes/issues.router");
 const totalIssueRouter = require("./routes/totalIssues.router");
 const { ratelimiterMiddlware } = require("./middleware/rateLimitMIddleware");
+const { env } = require("./config/constants/env");
 // const { env } = require("./config/constants/env");
 require("dotenv").config();
 
@@ -14,10 +15,8 @@ const PORT = 5000;
 //middleware
 app.use(
   cors({
-    origin:
-      "http://localhost:5173" ||
-      "https://www.jwoc.in/issues" ||
-      "https://www.jwoc.in/issues?admin=eyJGh449j2.uim",
+    origin: env.CLIENT_URL,
+
     allowedHeaders: ["Content-Type", "Authorization"],
     methods: ["GET"],
     credentials: true,
