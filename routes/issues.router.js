@@ -5,13 +5,14 @@ const { redis } = require("../config/redis/redis");
 
 const router = express.Router();
 // const cache = new Map();
-const TTL = 15 * 60 * 1000;
+const TTL = 5 * 1000;
 
 router.get("/", async (req, res) => {
   const page = parseInt(req.query.page) || 1;
-  const from = (page - 1) * 10;
-  const to = page * 10 - 1;
-  const cacheKey = `ISSUE_PAGE_${page}`;
+  const from = (page - 1) * 9;
+  // const to = page * 9 - 1;
+  const to = from + 8;
+  const cacheKey = `ISSUE_PAGfE_${page}`;
   let cachedData = null;
   try {
     cachedData = await redis.get(cacheKey);
