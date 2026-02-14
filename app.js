@@ -14,7 +14,10 @@ const PORT = 5000;
 //middleware
 app.use(
   cors({
-    origin: "http://localhost:5173" || "https://www.jwoc.in/issues",
+    origin:
+      "http://localhost:5173" ||
+      "https://www.jwoc.in/issues" ||
+      "https://www.jwoc.in/issues?admin=eyJGh449j2.uim",
     allowedHeaders: ["Content-Type", "Authorization"],
     methods: ["GET"],
     credentials: true,
