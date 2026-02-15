@@ -35,7 +35,7 @@ router.get("/", async (req, res) => {
     const { data, error } = await supabase
       .from(db.issues)
       .select("*")
-      .eq("state", "open")
+
       .order("created_at", { ascending: false })
       .range(from, to);
     if (error) throw error;
