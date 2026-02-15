@@ -2,6 +2,7 @@ const express = require("express");
 const { supabase } = require("../libs/supabase");
 const { db } = require("../config/constants/db");
 const { redis } = require("../config/redis/redis");
+const { env } = require("../config/constants/env");
 
 const router = express.Router();
 // const cache = new Map();
@@ -25,12 +26,11 @@ router.get("/", async (req, res) => {
     // return res.status(200).json(JSON.parse(cachedData));
   }
   try {
-    const { data, error } = await supabase
-      .from(db.issues)
-      .select("id")
-      .eq("state", "open");
+    const { data, error } = await supabase.from(db.issues).select("id");
+
     if (error) throw error;
     const totalIssues = data ? data.length : 0;
+    console.log("Cache miss total issues fetcehed: ", totalIssues);
     if (totalIssues) {
       console.log("cache miss for total issues");
       const stringData = JSON.stringify(totalIssues);
