@@ -15,7 +15,7 @@ const PORT = 5000;
 //middleware
 app.use(
   cors({
-    origin: env.CLIENT_URL,
+    origin: env.CLIENT_URL || "http://localhost:5173",
 
     allowedHeaders: ["Content-Type", "Authorization"],
     methods: ["GET"],
