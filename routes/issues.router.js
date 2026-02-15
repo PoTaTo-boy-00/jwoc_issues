@@ -2,10 +2,11 @@ const express = require("express");
 const { supabase } = require("../libs/supabase");
 const { db } = require("../config/constants/db");
 const { redis } = require("../config/redis/redis");
+const { env } = require("../config/constants/env");
 
 const router = express.Router();
 // const cache = new Map();
-const TTL = 15 * 60 * 1000;
+const TTL = env.TTL ? parseInt(env.TTL) : 15 * 60 * 1000;
 
 router.get("/", async (req, res) => {
   const page = parseInt(req.query.page) || 1;

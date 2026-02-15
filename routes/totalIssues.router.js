@@ -5,7 +5,7 @@ const { redis } = require("../config/redis/redis");
 
 const router = express.Router();
 // const cache = new Map();
-const TTL = 15 * 60 * 1000;
+const TTL = env.TTL ? parseInt(env.TTL) : 15 * 60 * 1000;
 
 router.get("/", async (req, res) => {
   const cacheKey = "TOTAL_ISSUES";
