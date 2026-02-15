@@ -5,7 +5,7 @@ const { redis } = require("../config/redis/redis");
 
 const router = express.Router();
 // const cache = new Map();
-const TTL = 5 * 1000;
+const TTL = 15 * 60 * 1000;
 
 router.get("/", async (req, res) => {
   const page = parseInt(req.query.page) || 1;
@@ -19,16 +19,16 @@ router.get("/", async (req, res) => {
   } catch (err) {
     console.warn("Redis error (get):", err.message);
   }
-
-  if (cachedData) {
-    console.log("Cache hit");
-    console.log("Type of Data is :", typeof cachedData);
-    console.log("No of data sent:", cachedData.length);
+  // console.log(cachedData);
+  if (cachedData !== null) {
+    console.log("Cache hit for issues page:", page);
+    console.log("Type of Data for issues page is :", typeof cachedData);
+    console.log("No of data sent from issue page:", cachedData.length);
+    // console.log(cachedData);
     if (typeof cachedData === "object") {
       return res.status(200).json(cachedData);
     }
-    console.log(cachedData);
-    return res.status(200).json(cachedData);
+    return res.status(200).json(JSON.parse(cachedData));
   }
   try {
     // cache miss

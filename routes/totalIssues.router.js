@@ -15,7 +15,7 @@ router.get("/", async (req, res) => {
   } catch (err) {
     console.warn("Redis error (get):", err.message);
   }
-  if (cachedData) {
+  if (cachedData != null) {
     console.log("Cache hit for total issues");
     console.log("Type of Data is :", typeof cachedData);
 
