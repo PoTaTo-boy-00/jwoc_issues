@@ -12,7 +12,7 @@ router.get("/", async (req, res) => {
   const from = (page - 1) * 9;
   // const to = page * 9 - 1;
   const to = from + 8;
-  const cacheKey = `ISSUE_PAGfE_${page}`;
+  const cacheKey = `ISSUE_PAGE_${page}`;
   let cachedData = null;
   try {
     cachedData = await redis.get(cacheKey);
@@ -27,15 +27,14 @@ router.get("/", async (req, res) => {
     if (typeof cachedData === "object") {
       return res.status(200).json(cachedData);
     }
-
-    return res.status(200).json(JSON.parse(cachedData));
+    console.log(cachedData);
+    return res.status(200).json(cachedData);
   }
   try {
     // cache miss
     const { data, error } = await supabase
       .from(db.issues)
       .select("*")
-
       .order("created_at", { ascending: false })
       .range(from, to);
     if (error) throw error;
