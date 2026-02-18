@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const issueRouter = require("./routes/issues.router");
 const totalIssueRouter = require("./routes/totalIssues.router");
+const issueByRepoRouter=require("./routes/issueByRepo.router");
 const { ratelimiterMiddlware } = require("./middleware/rateLimitMIddleware");
 const { env } = require("./config/constants/env");
 // const { env } = require("./config/constants/env");
@@ -29,6 +30,7 @@ app.get("/", (req, res) => {
 });
 app.use("/issues", ratelimiterMiddlware, issueRouter);
 app.use("/totalIssues", ratelimiterMiddlware, totalIssueRouter);
+app.use("/issuesByRepo", ratelimiterMiddlware, issueByRepoRouter);
 
 //start server
 app.listen(PORT, () => {

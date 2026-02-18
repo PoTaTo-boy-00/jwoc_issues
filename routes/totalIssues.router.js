@@ -9,39 +9,57 @@ const router = express.Router();
 const TTL = env.TTL ? parseInt(env.TTL) : 15 * 60 * 1000;
 
 router.get("/", async (req, res) => {
-  const cacheKey = "TOTAL_ISSUES";
-  let cachedData = null;
+  const repository = req.query.repository || "";
+
+  const cacheKey =
+    repository === "" ? "TOTAL_ISSUES_ALL" : `TOTAL_ISSUES_${repository}`;
+
   try {
-    cachedData = await redis.get(cacheKey);
+    const cachedData = await redis.get(cacheKey);
+
+    if (cachedData) {
+      console.log("Cache hit:", cacheKey);
+      return res.status(200).json(JSON.parse(cachedData));
+    }
   } catch (err) {
     console.warn("Redis error (get):", err.message);
   }
-  if (cachedData != null) {
-    console.log("Cache hit for total issues");
-    console.log("Type of Data is :", typeof cachedData);
-
-    // if (typeof cachedData === "object") {
-    return res.status(200).json(cachedData);
-    // }
-    // return res.status(200).json(JSON.parse(cachedData));
-  }
+  console.log("Reponame", repository);
   try {
-    const { data, error } = await supabase.from(db.issues).select("id");
+    let query = supabase.from(db.issues).select("id");
+
+    if (repository !== "") {
+      const { data: projectData, error: projectError } = await supabase
+        .from(db.projects)
+        .select("id")
+        .eq("project_name", repository)
+        .single();
+      if (projectError) {
+        if (projectError.code === "PGRST116") {
+          return res.status(404).json({ error: "Repository not found" });
+        }
+        throw projectError;
+      }
+      console.log(projectData.id);
+      query = query.eq("project_id", projectData.id);
+    }
+
+    const { data, error } = await query;
 
     if (error) throw error;
+
     const totalIssues = data ? data.length : 0;
-    console.log("Cache miss total issues fetcehed: ", totalIssues);
-    if (totalIssues) {
-      console.log("cache miss for total issues");
-      const stringData = JSON.stringify(totalIssues);
-      redis
-        .set(cacheKey, stringData, {
-          ex: TTL / 1000,
-        })
-        .catch((err) => console.warn("Redis error (set):", err.message));
-      console.log("data set in cache for total issues:", totalIssues);
-    }
-    res.status(200).json({ totalIssues });
+    console.log(totalIssues);
+
+    const response = { totalIssues };
+
+    await redis.set(cacheKey, JSON.stringify(response), {
+      ex: TTL / 1000,
+    });
+
+    console.log("Cache miss. Stored:", cacheKey);
+
+    return res.status(200).json(response);
   } catch (error) {
     console.error("Error fetching total issues:", error);
     res.status(500).json({ error: "Failed to fetch total issues" });

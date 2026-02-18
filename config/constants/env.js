@@ -7,6 +7,7 @@ const envSchema = z.object({
   UPSTASH_REDIS_REST_URL: z.string(),
   CLIENT_URL: z.string(),
   UPSTASH_REDIS_REST_TOKEN: z.string(),
+  TTL: z.string().optional(),
 });
 
 const env = envSchema.parse({
@@ -15,6 +16,7 @@ const env = envSchema.parse({
   UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
   CLIENT_URL: process.env.CLIENT_URL,
   UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
+  TTL: process.env.TTL,
 });
 
 module.exports = { env };
