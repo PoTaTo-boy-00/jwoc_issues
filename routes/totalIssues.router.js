@@ -15,11 +15,12 @@ router.get("/", async (req, res) => {
     repository === "" ? "TOTAL_ISSUES_ALL" : `TOTAL_ISSUES_${repository}`;
 
   try {
+    // console.log(cacheKey);
     const cachedData = await redis.get(cacheKey);
-
+    console.log(cachedData);
     if (cachedData) {
       console.log("Cache hit:", cacheKey);
-      return res.status(200).json(JSON.parse(cachedData));
+      return res.status(200).json(cachedData);
     }
   } catch (err) {
     console.warn("Redis error (get):", err.message);
@@ -40,7 +41,7 @@ router.get("/", async (req, res) => {
         }
         throw projectError;
       }
-      console.log(projectData.id);
+      // console.log(projectData.id);
       query = query.eq("project_id", projectData.id);
     }
 
@@ -49,13 +50,18 @@ router.get("/", async (req, res) => {
     if (error) throw error;
 
     const totalIssues = data ? data.length : 0;
-    console.log(totalIssues);
+    // console.log(totalIssues);
 
     const response = { totalIssues };
 
-    await redis.set(cacheKey, JSON.stringify(response), {
-      ex: TTL / 1000,
-    });
+    await redis.set(
+      cacheKey,
+
+      JSON.stringify(response),
+      {
+        ex: TTL / 1000,
+      },
+    );
 
     console.log("Cache miss. Stored:", cacheKey);
 

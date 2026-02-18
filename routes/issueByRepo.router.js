@@ -6,7 +6,7 @@ const { env } = require("../config/constants/env");
 
 const router = express.Router();
 // const cache = new Map();
-const TTL = env.TTL ? parseInt(env.TTL) : 15 * 60 * 1000;
+const TTL = env.TTL ? env.TTL : 15 * 60 * 1000;
 
 router.get("/:repo", async (req, res) => {
   const repoName = req.params.repo;
@@ -19,7 +19,9 @@ router.get("/:repo", async (req, res) => {
   //   console.log(repoName);
   try {
     cachedData = await redis.get(cacheKey);
+
     if (cachedData) {
+      console.log("cache hit for repo ", repoName);
       return res.status(200).json({
         success: true,
         data: cachedData,
