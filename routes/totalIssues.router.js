@@ -34,6 +34,7 @@ router.get("/", async (req, res) => {
         .from(db.projects)
         .select("id")
         .eq("project_name", repository)
+        .eq("is_selected", true)
         .single();
       if (projectError) {
         if (projectError.code === "PGRST116") {
